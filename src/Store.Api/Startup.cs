@@ -14,6 +14,8 @@ using NLog.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 
 using Microsoft.EntityFrameworkCore;
+using Store.Api.Entities;
+using Store.Api.Services;
 
 namespace Store.Api
 {
@@ -40,33 +42,18 @@ namespace Store.Api
                 // adds output formatters for xml
                 .AddMvcOptions(o => o.OutputFormatters.Add(
                     new XmlDataContractSerializerOutputFormatter()));
-            // Change serializer settings to null which does not camel case names of properties in corresponding class.
-            //.AddJsonOptions(o =>
-            //{
-            //    if (o.SerializerSettings.ContractResolver != null)
-            //    {
-            //        var castedResolver = o.SerializerSettings.ContractResolver
-            //            as DefaultContractResolver;
-            //        castedResolver.NamingStrategy = null;
-            //    }
-            //});
-
-//#if DEBUG
-//            services.AddTransient<IMailService, LocalMailService>();
-//#else
-//            services.AddTransient<IMailService, CloudMailService>();
-//#endif
+          
 
 
-            // Adds CityInfoContext to use sql server / Gets from appSettings.json
+            // Adds StoreContext to use sql server / Gets from appSettings.json
 
-            //var connectionString = Startup.Configuration["connectionStrings:cityInfoDBConnectionString"];
-            //services.AddDbContext<CityInfoContext>(o => o.UseSqlServer(connectionString));
-            //services.AddScoped<ICityInfoRepository, CityInfoRepository>();
+            var connectionString = Startup.Configuration["connectionStrings:storeInfoDBConnectionString"];
+            services.AddDbContext<StoreContext>(o => o.UseSqlServer(connectionString));
+            services.AddScoped<IProductRepository, ProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory/*, CityInfoContext cityInfoContext*/)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, StoreContext storeContext)
         {
             loggerFactory.AddConsole();
 
@@ -85,19 +72,23 @@ namespace Store.Api
                 app.UseExceptionHandler();
             }
 
-            //cityInfoContext.EnsureSeedDataForContext();
+            storeContext.EnsureSeedDataForContext();
 
             app.UseStatusCodePages();
 
-            //AutoMapper.Mapper.Initialize(cfg =>
-            //{
-            //    cfg.CreateMap<Entities.City, Models.CityWithoutPointsOfInterestDto>();
-            //    cfg.CreateMap<Entities.City, Models.CityDto>();
-            //    cfg.CreateMap<Entities.PointOfInterest, Models.PointOfInterestDto>();
-            //    cfg.CreateMap<Models.PointOfInterestForCreationDto, Entities.PointOfInterest>();
-            //    cfg.CreateMap<Models.PointOfInterestForUpdateDto, Entities.PointOfInterest>();
-            //    cfg.CreateMap<Entities.PointOfInterest, Models.PointOfInterestForUpdateDto>();
-            //});
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Models.ProductForCreationDto, Entities.Product>();
+                cfg.CreateMap<Entities.Product, Models.ProductDto>();
+                cfg.CreateMap<Models.ProductDto, Entities.Product>();
+                cfg.CreateMap<Models.ProductForUpdateDto, Entities.Product>();
+                cfg.CreateMap<Entities.Product, Models.ProductForUpdateDto>();
+                //cfg.CreateMap<Entities.City, Models.CityDto>();
+                //cfg.CreateMap<Entities.PointOfInterest, Models.PointOfInterestDto>();
+                //cfg.CreateMap<Models.PointOfInterestForCreationDto, Entities.PointOfInterest>();
+                //cfg.CreateMap<Models.PointOfInterestForUpdateDto, Entities.PointOfInterest>();
+                //cfg.CreateMap<Entities.PointOfInterest, Models.PointOfInterestForUpdateDto>();
+            });
 
             app.UseMvc();
             

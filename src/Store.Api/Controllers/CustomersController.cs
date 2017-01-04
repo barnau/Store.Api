@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Store.Api.Controllers
 {
-    [Route("api/users")]
+    [Route("api/customers")]
     public class CustomersController : Controller
     {
         [HttpGet("{id}")]
@@ -70,6 +70,12 @@ namespace Store.Api.Controllers
             string result = "Put customer route executed for customer id: " + id;
 
             return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCustomer(int id)
+        {
+            return Ok("This is the delete route for customer id: " + id);
         }
     }
 }
