@@ -13,7 +13,7 @@ namespace Store.Api.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; private set; }
         //[ForeignKey("CustomerId")]
-        //public Customer customer { get; set; }
+        public Customer customer { get; set; }
         //public int CustomerId { get; set; }
 
         public string StreetLine1 { get; set; }

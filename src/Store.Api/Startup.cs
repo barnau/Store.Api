@@ -50,6 +50,7 @@ namespace Store.Api
             var connectionString = Startup.Configuration["connectionStrings:storeInfoDBConnectionString"];
             services.AddDbContext<StoreContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,11 +84,11 @@ namespace Store.Api
                 cfg.CreateMap<Models.ProductDto, Entities.Product>();
                 cfg.CreateMap<Models.ProductForUpdateDto, Entities.Product>();
                 cfg.CreateMap<Entities.Product, Models.ProductForUpdateDto>();
-                //cfg.CreateMap<Entities.City, Models.CityDto>();
-                //cfg.CreateMap<Entities.PointOfInterest, Models.PointOfInterestDto>();
-                //cfg.CreateMap<Models.PointOfInterestForCreationDto, Entities.PointOfInterest>();
-                //cfg.CreateMap<Models.PointOfInterestForUpdateDto, Entities.PointOfInterest>();
-                //cfg.CreateMap<Entities.PointOfInterest, Models.PointOfInterestForUpdateDto>();
+                cfg.CreateMap<Entities.Customer, Models.CustomerDto>();
+                cfg.CreateMap<Models.CustomerForCreationDto, Entities.Customer>();
+                cfg.CreateMap<Entities.Customer, Models.CustomerForCreationDto>();
+                cfg.CreateMap<Models.AddressForCreationDto, Entities.Address>();
+                cfg.CreateMap<Entities.Address, Models.AddressForCreationDto>();
             });
 
             app.UseMvc();

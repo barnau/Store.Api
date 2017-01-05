@@ -9,9 +9,11 @@ namespace Store.Api.Services
     public interface ICustomerRepository
     {
         bool CustomerExists(int customerId);
+
+        IEnumerable<Customer> GetCustomers();
         Customer GetCustomer(int customerId);
         void AddCustomer(Customer customer);
-        
+
         void DeleteCustomer(Customer customer);
         bool Save();
     }

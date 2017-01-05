@@ -9,11 +9,21 @@ namespace Store.Api.Services
     public class CustomerRepository : ICustomerRepository
     {
 
+
         private StoreContext _storeContext;
 
         public CustomerRepository(StoreContext storeContext)
         {
             _storeContext = storeContext;
+        }
+        public IEnumerable<Customer> GetCustomers()
+        {
+            return _storeContext.Customers.OrderBy(c => c.LastName).ToList();
+        }
+
+        public Customer GetCustomer(int customerId)
+        {
+            return _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault();
         }
         public void AddCustomer(Customer customer)
         {
@@ -30,16 +40,13 @@ namespace Store.Api.Services
             _storeContext.Customers.Remove(customer);
         }
 
-        public Customer GetCustomer(int customerId)
-        {
-            return _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault();
-        }
+
 
         public bool Save()
         {
             return (_storeContext.SaveChanges() >= 0);
         }
 
-        
+
     }
 }

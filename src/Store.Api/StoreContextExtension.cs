@@ -10,7 +10,7 @@ namespace Store.Api
     {
         public static void EnsureSeedDataForContext(this StoreContext context)
         {
-            if (context.Products.Any())
+            if (context.Products.Any() || context.Customers.Any())
             {
                 return;
             }
@@ -47,7 +47,38 @@ namespace Store.Api
             };
 
             context.Products.AddRange(products);
-            context.SaveChanges();
+
+            var customers = new List<Customer>()
+            {
+                new Customer()
+                {
+                    FirstName ="Blaine",
+                    LastName = "Arnau",
+                    Email = "blainearnau@gmail.com",
+                   
+
+                },
+                new Customer()
+                {
+                    FirstName ="Patty",
+                    LastName = "Roots",
+                    Email = "pattyroots@gmail.com",
+                   
+
+                }
+            };
+
+            context.Customers.AddRange(customers);
+
+            if (context.SaveChanges() >= 0)
+            {
+                Console.WriteLine("save was successfull.");
+            }
+            else
+            {
+                Console.WriteLine("save failed.");
+            }
+
         }
     }
 }

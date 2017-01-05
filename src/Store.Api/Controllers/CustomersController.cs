@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Store.Api.Entities;
 using Store.Api.Models;
+using Store.Api.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,50 +13,63 @@ namespace Store.Api.Controllers
     [Route("api/customers")]
     public class CustomersController : Controller
     {
-        [HttpGet("{id}")]
+        private ICustomerRepository _customerRepository;
+        public CustomersController(ICustomerRepository customerRepository)
+        {
+            _customerRepository = customerRepository;
+        }
+
+        [HttpGet("{id}", Name = "GetCustomer")]
         public IActionResult GetCustomer(int id)
         {
-            var customer = new CustomerDto()
+            if (!_customerRepository.CustomerExists(id))
             {
-                Id = id,
-                FirstName = "Blaine",
-                LastName = "Arnau",
-                Email = "blainearnau@gmail.com"
-            };
+                return NotFound();
+            }
 
-            return Ok(customer);
+            var customerEntity = _customerRepository.GetCustomer(id);
+            var result = Mapper.Map<CustomerDto>(customerEntity);
+
+            return Ok(result);
+
         }
 
         [HttpGet()]
         public IActionResult GetCustomers()
         {
-            var customers = new List<CustomerDto>()
-            {
-                new CustomerDto()
-                {
-                    Id = 1,
-                    FirstName = "Blaine",
-                    LastName = "Arnau",
-                    Email = "blainearnau@gmail.com"
-                },
-                new CustomerDto()
-                {
-                    Id = 2,
-                    FirstName = "Patty",
-                    LastName = "Roots",
-                    Email = "pattyroots@gmail.com"
-                }
-            };
+            var customerEntities = _customerRepository.GetCustomers();
+            var results = Mapper.Map<List<CustomerDto>>(customerEntities);
 
-            return Ok(customers);
+            return Ok(results);
+
         }
 
         [HttpPost()]
-        public IActionResult AddCustomer()
+        public IActionResult AddCustomer([FromBody] CustomerForCreationDto customer)
         {
-            string result = "Add/post customer route executed";
+            if (customer == null)
+            {
+                return BadRequest();
+            }
 
-            return Ok(result);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customerEntity = Mapper.Map<Customer>(customer);
+
+            _customerRepository.AddCustomer(customerEntity);
+
+            if (!_customerRepository.Save())
+            {
+                return StatusCode(500, "A problem happened while handling your request.");
+            }
+
+            var createdCustomerToReturn = Mapper.Map<CustomerDto>(customerEntity);
+            return CreatedAtRoute("GetCustomer", new { id = customerEntity.Id, name = customerEntity.FirstName + " " + customerEntity.LastName }, createdCustomerToReturn);
+
+
         }
 
         [HttpPatch("{id}")]

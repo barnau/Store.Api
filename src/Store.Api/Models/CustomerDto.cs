@@ -11,8 +11,8 @@ namespace Store.Api.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public List<AddressDto> AddressList { get; set; }
-        public List<ProductDto> ProductList { get; set; }
-        public List<OrderDto> OrderList { get; set; }
+        public List<AddressDto> Addresses { get; set; }
+        public List<ProductDto> Products { get; set; }
+        public List<OrderDto> Orders { get; set; }
     }
 }
