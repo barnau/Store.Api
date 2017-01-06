@@ -9,17 +9,21 @@ namespace Store.Api.Entities
 {
     public class Order
     {
+        public Order()
+        {
+            OrderItems = new List<OrderItem>();
+        }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
         public Customer Customer { get; set; }
         public int CustomerId { get; set; }
-
+        public DateTime? OrderDate { get; set; }
 
         public int ShippingAddressId { get; set; }
-        public Address ShippingAddress { get; set; }
         
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        public virtual ICollection<OrderItem> OrderItems { get; set; }
+        
     }
 }
