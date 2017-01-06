@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Store.Api.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Store.Api.Services
 {
@@ -23,7 +24,7 @@ namespace Store.Api.Services
 
         public Customer GetCustomer(int customerId)
         {
-            return _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault();
+            return _storeContext.Customers.Include(c => c.Addresses).Where(c => c.Id == customerId).FirstOrDefault();
         }
         public void AddCustomer(Customer customer)
         {

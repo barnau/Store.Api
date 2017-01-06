@@ -22,7 +22,7 @@ namespace Store.Api.Entities
         [Required]
         [MaxLength(70)]
         public string Email { get; set; }
-        public ICollection<Address> Addresses { get; set; } = new List<Address>();
+        public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
         //public ICollection<Product> Products { get; set; } = new List<Product>();
         public ICollection<Order> Orders { get; set; } = new List<Order>();
     }

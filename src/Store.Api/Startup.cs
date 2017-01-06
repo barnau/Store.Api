@@ -51,6 +51,7 @@ namespace Store.Api
             services.AddDbContext<StoreContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,8 +88,14 @@ namespace Store.Api
                 cfg.CreateMap<Entities.Customer, Models.CustomerDto>();
                 cfg.CreateMap<Models.CustomerForCreationDto, Entities.Customer>();
                 cfg.CreateMap<Entities.Customer, Models.CustomerForCreationDto>();
+                cfg.CreateMap<Models.CustomerForUpdateDto, Entities.Customer>();
+                cfg.CreateMap<Entities.Customer, Models.CustomerForUpdateDto>();
                 cfg.CreateMap<Models.AddressForCreationDto, Entities.Address>();
                 cfg.CreateMap<Entities.Address, Models.AddressForCreationDto>();
+                cfg.CreateMap<Entities.Address, Models.AddressDto>();
+                cfg.CreateMap<Models.AddressForCreationDto, Entities.Address>();
+                cfg.CreateMap<Models.AddressForUpdateDto, Entities.Address>();
+                cfg.CreateMap<Entities.Address, Models.AddressForUpdateDto>();
             });
 
             app.UseMvc();

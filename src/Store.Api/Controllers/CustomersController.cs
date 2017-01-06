@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Store.Api.Entities;
 using Store.Api.Models;
@@ -28,6 +29,8 @@ namespace Store.Api.Controllers
             }
 
             var customerEntity = _customerRepository.GetCustomer(id);
+
+           
             var result = Mapper.Map<CustomerDto>(customerEntity);
 
             return Ok(result);
@@ -73,25 +76,101 @@ namespace Store.Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult PatchCustomer(int id)
+        public IActionResult PatchCustomer(int id, [FromBody] JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {
-            string result = "Patch customer route executed for customer id: " + id;
+            if(patchDoc == null)
+            {
+                return BadRequest();
+            }
 
-            return Ok(result);
+            if(!_customerRepository.CustomerExists(id))
+            {
+                return NotFound();
+            }
+
+            var customerEntity = _customerRepository.GetCustomer(id);
+
+            if (customerEntity == null)
+            {
+                return NotFound();
+            }
+
+            var customerToPatch = Mapper.Map<CustomerForUpdateDto>(customerEntity);
+
+            patchDoc.ApplyTo(customerToPatch, ModelState);
+
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            TryValidateModel(customerToPatch);
+
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Mapper.Map(customerToPatch, customerEntity);
+
+            if(!_customerRepository.Save())
+            {
+                return StatusCode(500, "A problem happened while handling your request");
+            }
+
+            return NoContent();
         }
 
         [HttpPut("{id}")]
-        public IActionResult PutCustomer(int id)
+        public IActionResult PutCustomer(int id, [FromBody] CustomerForUpdateDto customer)
         {
-            string result = "Put customer route executed for customer id: " + id;
+            if(customer == null)
+            {
+                return BadRequest();
+            }
 
-            return Ok(result);
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (!_customerRepository.CustomerExists(id))
+            {
+                return NotFound();
+            }
+
+            var customerEntity = _customerRepository.GetCustomer(id);
+
+            Mapper.Map(customer, customerEntity);
+
+            if(!_customerRepository.Save())
+            {
+                return StatusCode(500, "There was a problem handling your request");
+            }
+
+            return NoContent();
+
+
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteCustomer(int id)
         {
-            return Ok("This is the delete route for customer id: " + id);
+            if(!_customerRepository.CustomerExists(id))
+            {
+                return NotFound();
+            }
+
+            var customerToDelete = _customerRepository.GetCustomer(id);
+
+            _customerRepository.DeleteCustomer(customerToDelete);
+
+            if(!_customerRepository.Save())
+            {
+                return StatusCode(500, "A problem happened while handling your request");
+            }
+
+            return NoContent();
         }
     }
 }
