@@ -16,26 +16,34 @@ namespace Store.Api.Services
 
         public void AddOrder(int customerId, Order order)
         {
-            _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault()
-                .Orders.Add(order);
+            var customer = _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault();
+            customer.Orders.Add(order);
         }
 
-        public void DeleteOrder(int customerId, Order order)
+        public bool CustomerExists(int customerId)
         {
-            _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault()
-                .Orders.Remove(order);
+            return _storeContext.Customers.Any(c => c.Id == customerId);
         }
 
-        public Order GetOrder(int customerId, int orderId)
+        public void DeleteOrder(Order order)
         {
-            return _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault()
-                .Orders.Where(o => o.Id == orderId).FirstOrDefault();
+            
+            _storeContext.Orders.Remove(order);
         }
 
-        public bool OrderExists(int customerId, int orderId)
+        public Customer GetCustomer(int customerId)
         {
-           return  _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault()
-                .Orders.Any(o => o.Id == orderId);
+            return _storeContext.Customers.Where(c => c.Id == customerId).FirstOrDefault();
+        }
+
+        public Order GetOrderForCustomer(int customerId, int orderId)
+        {
+            return _storeContext.Orders.Where(o => o.CustomerId == customerId && o.Id == orderId).FirstOrDefault();
+        }
+
+        public IEnumerable<Order> GetOrdersForCustomer(int customerId)
+        {
+            return _storeContext.Orders.Where(o => o.CustomerId == customerId).ToList();
         }
 
         public bool Save()

@@ -8,11 +8,13 @@ namespace Store.Api.Services
 {
     public interface IOrderRepository
     {
-        bool OrderExists(int customerId, int orderId);
-        Order GetOrder(int customerId, int orderId);
+        Customer GetCustomer(int customerId);
+        bool CustomerExists(int customerId);
+        Order GetOrderForCustomer(int customerId, int orderId);
+        IEnumerable<Order> GetOrdersForCustomer(int customerId);
         void AddOrder(int customerId, Order order);
 
-        void DeleteOrder(int customerId, Order order);
+        void DeleteOrder(Order order);
         bool Save();
     }
 }

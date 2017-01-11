@@ -52,6 +52,8 @@ namespace Store.Api
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderItemRepository, OrderItemRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -96,6 +98,12 @@ namespace Store.Api
                 cfg.CreateMap<Models.AddressForCreationDto, Entities.Address>();
                 cfg.CreateMap<Models.AddressForUpdateDto, Entities.Address>();
                 cfg.CreateMap<Entities.Address, Models.AddressForUpdateDto>();
+                cfg.CreateMap<Entities.Order, Models.OrderDto>();
+                cfg.CreateMap<Models.OrderForCreationDto, Entities.Order>();
+                cfg.CreateMap<Entities.Order, Models.OrderDto>();
+                cfg.CreateMap<Models.OrderForUpdateDto, Entities.Order>();
+                cfg.CreateMap<Entities.Order, Models.OrderForUpdateDto>();
+
             });
 
             app.UseMvc();
